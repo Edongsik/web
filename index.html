@@ -1,88 +1,468 @@
-<!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>망해가는 보드게임 카페 운영일지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xapi-wrapper@2.2.1/dist/xapiwrapper.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .quiz-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .selected-answer {
+             border-color: #F97316 !important; /* Tailwind orange-500 */
+             box-shadow: 0 0 0 2px #F97316;
+        }
+        .feedback {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            opacity: 0;
+        }
+        .feedback.show {
+            max-height: 250px; /* 늘어난 피드백 공간 확보 */
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
 
-        <link rel="stylesheet" href="css/normalize.min.css">
-        <link rel="stylesheet" href="css/main.css">
+    <!-- 시작 화면 -->
+    <div id="start-container" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center">
+        <h1 class="text-2xl md:text-3xl font-bold text-slate-800">AI 정보 활용 편향 진단</h1>
+        <h2 class="text-lg text-slate-600 mt-2">망해가는 보드게임 카페 운영일지</h2>
+        <div class="text-slate-600 mt-4 mb-8 text-base leading-relaxed text-left border-t border-b py-6">
+            <p class="mb-4">당신의 절친 '철수'는 컨설턴트의 말만 믿고 덜컥 보드게임 카페를 차렸습니다.</p>
+            <p class="mb-4">문제는... 철수는 보드게임을 전혀 모른다는 것! "AI가 있으니 괜찮아!"라며 자신만만해하는 철수.</p>
+            <p>지금부터 당신이 바로 그 '철수'가 되어 카페를 운영해봅니다. 당신의 선택이 철수와 카페의 운명을 결정합니다.</p>
+        </div>
+        <button id="start-quiz-button" class="w-full py-3 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition-colors text-lg">진단 시작하기</button>
+    </div>
 
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-    </head>
-    <body>
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
-        <div class="header-container">
-            <header class="wrapper clearfix">
-                <h1 class="title">h1.title</h1>
-                <nav>
-                    <ul>
-                        <li><a href="#">nav ul li a</a></li>
-                        <li><a href="#">nav ul li a</a></li>
-                        <li><a href="#">nav ul li a</a></li>
-                    </ul>
-                </nav>
-            </header>
+    <!-- 퀴즈 화면 -->
+    <div id="quiz-container" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 md:p-8 hidden">
+        <div class="mb-6">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-800 text-center">망해가는 보드게임 카페 운영일지</h1>
         </div>
 
-        <div class="main-container">
-            <div class="main wrapper clearfix">
-
-                <article>
-                    <header>
-                        <h1>article header h1</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec.</p>
-                    </header>
-                    <section>
-                        <h2>article section h2</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices. Proin in est sed erat facilisis pharetra.</p>
-                    </section>
-                    <section>
-                        <h2>article section h2</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices. Proin in est sed erat facilisis pharetra.</p>
-                    </section>
-                    <footer>
-                        <h3>article footer h3</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor.</p>
-                    </footer>
-                </article>
-
-                <aside>
-                    <h3>aside</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices.</p>
-                </aside>
-
-            </div> <!-- #main -->
-        </div> <!-- #main-container -->
-
-        <div class="footer-container">
-            <footer class="wrapper">
-                <h3>footer</h3>
-            </footer>
+        <div id="progress-container" class="mb-4">
+             <div class="flex justify-between items-center mb-1">
+                 <span id="stage-counter" class="text-sm font-medium text-slate-600"></span>
+             </div>
+             <div class="w-full bg-slate-200 rounded-full h-2.5">
+                 <div id="progress-bar" class="bg-orange-500 h-2.5 rounded-full transition-all duration-500"></div>
+             </div>
         </div>
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+        <div id="quiz-content" class="text-left">
+            <p id="quiz-type" class="text-center text-sm font-semibold text-indigo-600 bg-indigo-100 rounded-full py-1 px-3 mb-3 inline-block"></p>
+            <div id="story-container" class="bg-slate-50 p-4 rounded-lg mb-5 border border-slate-200">
+                <p id="story" class="text-slate-700 leading-relaxed"></p>
+            </div>
+            <h2 id="question" class="text-lg md:text-xl font-semibold text-slate-800 mb-5 text-center min-h-[4rem] flex items-center justify-center"></h2>
+            <div id="answer-options" class="grid grid-cols-1 gap-3">
+                <!-- 선택지는 여기에 동적으로 생성됩니다 -->
+            </div>
+            
+            <div id="feedback-container" class="mt-4">
+                <p id="rationale-text" class="feedback text-left p-3 rounded-lg bg-orange-50 text-orange-800 border border-orange-200"></p>
+                <div id="solution-container" class="feedback mt-2 text-left p-3 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    <h4 class="font-bold text-center">💡 바른 대응</h4>
+                    <p id="solution-text" class="mt-1 text-sm"></p>
+                </div>
+                <div class="flex items-center justify-end mt-4">
+                    <button id="next-button" class="px-6 py-2 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition-colors hidden">다음 &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 결과 화면 -->
+    <div id="results-container" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center hidden">
+        <h2 class="text-3xl font-bold text-slate-800">진단 완료!</h2>
+        <p class="text-slate-500 mt-2">당신의 비즈니스 판단 유형은...</p>
+        
+        <div id="profile-display" class="my-6">
+            <h3 id="profile-name" class="text-2xl md:text-3xl font-bold text-orange-600 mb-2"></h3>
+            <p id="profile-description" class="text-slate-600 text-lg mb-4"></p>
+            <div class="text-left bg-slate-50 p-4 rounded-lg">
+                <p class="font-semibold text-slate-800">🎯 특징:</p>
+                <p id="profile-strength" class="text-slate-700 mb-2"></p>
+                <p class="font-semibold text-slate-800">💡 솔루션:</p>
+                <p id="profile-weakness" class="text-slate-700"></p>
+            </div>
+        </div>
 
-        <script src="js/main.js"></script>
+        <div id="type-analysis-container" class="my-8 text-left">
+            <h4 class="text-lg font-bold text-slate-800 mb-3 text-center">나의 편향 분석 결과</h4>
+            <div id="type-counts" class="space-y-2">
+                <!-- 분석 결과는 여기에 동적으로 생성됩니다 -->
+            </div>
+        </div>
+        
+        <button id="restart-button" class="w-full py-3 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition-colors text-lg">다시 진단하기</button>
+    </div>
 
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
-        </script>
-    </body>
+
+    <script>
+        // --- xAPI Configuration (Mock) ---
+        const actor = { "objectType": "Agent", "name": "Test User", "mbox": "mailto:testuser@example.com" };
+        function sendStatement(statement) {
+            console.log("--- New xAPI Statement ---");
+            console.log(JSON.stringify(statement, null, 2));
+        }
+        // --- End of xAPI Configuration ---
+
+        const TYPES = {
+            BELIEF: "맹신 편향",
+            REPRESENTATIVENESS: "일반화 오류",
+            ANCHORING: "정박 효과",
+            FRAMING: "프레이밍 효과" 
+        };
+        
+        const QUIZ_TYPES = {
+            FACTUAL_ERROR: "사실 오류",
+            CITATION_ERROR: "인용 오류",
+            NUMERICAL_ERROR: "수치 왜곡",
+            LOGICAL_ERROR: "논리 오류",
+            SUMMARIZATION_DISTORTION: "요약 왜곡",
+            ENTITY_TEMPORAL_ERROR: "개체·시간 혼동",
+            OUTDATED_INFORMATION: "업데이트 결핍",
+            INTERACTION_ERROR: "상호작용 오류"
+        };
+
+        // --- 스토리 데이터 (8단계) ---
+
+        const story_stage_1 = {
+            quizType: QUIZ_TYPES.FACTUAL_ERROR,
+            story: "보드게임은 잘 모르지만, 의욕만은 활활 불타오릅니다. 당신은 AI 비서에게 '요즘 MZ세대 인싸템 보드게임 추천해줘!'라고 자신있게 물어봅니다. AI가 답합니다: '요즘 가장 인기 있는 게임은 '대소동'입니다!'",
+            question: "AI의 추천을 받은 당신, 어떤 선택을 하시겠습니까?",
+            solution: "AI가 '가장 인기있다'고 단정해도 바로 믿지 마세요. '인기'의 기준(판매량, 검색량, 리뷰 평점 등)이 무엇인지, 어떤 데이터를 기반으로 한 추천인지 추가로 질문하고, 공신력 있는 보드게임 커뮤니티나 리뷰 사이트에서 교차 검증하는 것이 좋습니다.",
+            options: [
+                { text: "AI가 '가장 인기있다'고 했으니, 틀림없을 거야. 바로 30개 대량 주문하자.", bias: TYPES.BELIEF, next: 'stage_2', rationale: "<strong>[맹신 편향]</strong> AI가 '가장 인기있다'는 단정적인 표현을 사용했다다는 이유만으로, 비판적인 검토 없이 사실로 받아들이는 것은 AI의 권위를 맹신하는 태도입니다." },
+                { text: "AI가 추천한 '대소동'? 들어본 적 없는데... 요즘 유행하는 파티게임은 다 비슷비슷하지. 그냥 우리 가게에서 잘 나가는 다른 파티게임이랑 비교해서 결정해야겠다.", bias: TYPES.REPRESENTATIVENESS, next: 'stage_2', rationale: "<strong>[일반화 오류]</strong> '대소동'이라는 새로운 게임의 고유한 특성을 알아보려 하지 않고, '파티게임은 다 비슷하다'는 자신의 기존 경험과 인상에만 의존해 성급하게 판단하는 태도입니다." },
+                { text: "AI가 '가장 인기있다'는 키워드를 말해줬어. 이게 핵심이야. 다른 건 몰라도 인기는 보장되겠지. 가격이 좀 비싸도 구매를 추진하자.", bias: TYPES.ANCHORING, next: 'stage_2', rationale: "<strong>[정박 효과]</strong> AI가 처음 제시한 '가장 인기있다'는 정보에 생각이 닻을 내린 것처럼 고정되어, 가격이나 다른 중요한 요소를 신중하게 고려하지 못하게 되는 현상입니다." },
+                { text: "AI가 '대소동'이라는 재미있는 이름으로 표현했잖아? 이름부터 '인싸' 느낌이 나니 분명 성공할 거야. 이름만 믿고 들여오자.", bias: TYPES.FRAMING, next: 'stage_2', rationale: "<strong>[프레이밍 효과]</strong> 게임의 실제 내용이나 재미보다 '대소동'이라는 이름이 주는 긍정적인 느낌(프레임)에 영향을 받아 구매를 결정하는 것은, 표현 방식에 따라 판단이 달라지는 태도입니다." }
+            ]
+        };
+
+        const story_stage_2 = {
+            quizType: QUIZ_TYPES.CITATION_ERROR,
+            story: "AI 추천만 믿고 들여온 '대소동'은 먼지만 쌓여갑니다. 'AI가 틀릴 리 없는데...' 당신은 다시 AI에게 묻습니다. '대소동이 인기 있다는 근거를 대봐!' AI는 '세계 보드게임 연감(2023)에 따르면 올해의 파티게임으로 선정되었습니다'라고 답했습니다.",
+            question: "AI가 그럴듯한 출처를 제시합니다. 이번에는 어떻게 하시겠습니까?",
+            solution: "AI가 제시하는 출처는 실제 존재하지 않을 수 있습니다. '세계 보드게임 연감'이 실제로 존재하는지, 해당 연감에서 정말 '대소동'을 올해의 게임으로 선정했는지 구글 검색이나 관련 데이터베이스(예: BoardGameGeek)를 통해 직접 확인해야 합니다.",
+            options: [
+                { text: "구체적인 출처까지 말해주니 이번엔 진짜 정보겠지. 우리 가게 홍보가 부족했던 탓이야. 마케팅을 강화하자.", bias: TYPES.BELIEF, next: 'stage_3', rationale: "<strong>[맹신 편향]</strong> 한번 속았음에도 불구하고, AI가 구체적인 출처를 제시했다는 이유만으로 또다시 그 정보를 비판 없이 믿는 것은 같은 실수를 반복하는 것입니다." },
+                { text: "'올해의 게임'으로 선정된 다른 게임들을 찾아보니, 대부분 비슷한 스타일이었어. 그러니 '대소동'도 인기있는 게 맞을 거야.", bias: TYPES.REPRESENTATIVENESS, next: 'stage_3', rationale: "<strong>[일반화 오류]</strong> 다른 수상작들의 특징을 '대소동'에 성급하게 적용하며, 출처 자체의 진위 여부를 확인하지 않고 자신의 판단을 합리화하는 태도입니다." },
+                { text: "'2023년'이라는 연도와 '올해의 파티게임'이라는 정보가 너무 강력해. 이 정보에 집중해서 다른 의심은 잠시 접어두자.", bias: TYPES.ANCHORING, next: 'stage_3', rationale: "<strong>[정박 효과]</strong> '2023년', '올해의 게임' 같은 구체적인 정보에 생각이 꽂혀, 더 근본적인 문제인 '출처가 진짜인가?'를 확인하지 못하는 것입니다." },
+                { text: "'세계 보드게임 연감'이라는 권위 있어 보이는 이름에 신뢰가 간다. 이 출처를 인용해서 홍보 문구를 만들어야겠다.", bias: TYPES.FRAMING, next: 'stage_3', rationale: "<strong>[프레이밍 효과]</strong> '세계', '연감' 등 권위적으로 들리는 표현(프레임)에 영향을 받아, 출처의 신뢰도를 실제보다 높게 평가하고 검증 없이 활용하려는 태도입니다." }
+            ]
+        };
+        
+        const story_stage_3 = {
+            quizType: QUIZ_TYPES.NUMERICAL_ERROR,
+            story: "계속된 헛발질에 카페 통장 잔고가 바닥을 보입니다. 불안해진 당신은 AI에게 다급하게 묻습니다. '카페 매출 올릴 방법, 빨리 알려줘!' AI는 '시간당 이용료를 50% 인상하면, 예상 매출이 45% 증가합니다'라는 답변을 내놓았습니다.",
+            question: "AI가 구체적인 수치를 제시하며 가격 인상을 제안합니다. 당신의 선택은?",
+            solution: "수치 정보는 반드시 맥락을 확인해야 합니다. 가격을 50%나 올리면 방문객 수가 줄어들 가능성을 고려하지 않았습니다. 가격 탄력성을 고려한 예상 방문객 수 변화 데이터를 함께 요청하고, 소폭 인상안과 비교 검토해야 합니다.",
+            options: [
+                { text: "'45% 증가'라는 구체적인 숫자를 보니 신뢰가 가. 당장 내일부터 가격을 인상하자.", bias: TYPES.BELIEF, next: 'stage_4', rationale: "<strong>[맹신 편향]</strong> AI가 제시한 구체적인 숫자('45%')를 근거로, 그 계산 과정에 숨겨진 치명적인 오류(고객 수 감소 미반영)를 검토하지 않고 맹신하는 태도입니다." },
+                { text: "요즘 다른 카페들도 다 가격을 올리는 추세야. 우리도 이참에 올려야 손해를 안 보지.", bias: TYPES.REPRESENTATIVENESS, next: 'stage_4', rationale: "<strong>[일반화 오류]</strong> '다른 곳도 올린다'는 시장의 일반적인 현상을 근거로, 우리 가게에 50% 인상이 적절한지 구체적인 분석 없이 성급하게 결정하는 태도입니다." },
+                { text: "'매출 45% 증가'라는 첫 정보가 너무 강력해. 고객이 줄어들 거라는 걱정보다는 매출이 늘어날 거라는 기대가 더 크게 느껴진다.", bias: TYPES.ANCHORING, next: 'stage_4', rationale: "<strong>[정박 효과]</strong> '45% 증가'라는 긍정적이고 강력한 숫자에 생각이 고정되어, 가격 인상으로 인한 고객 이탈이라는 명백한 부작용을 제대로 평가하지 못하는 것입니다." },
+                { text: "'매출 증대'라는 목표에 딱 맞는 해결책처럼 보여. '가격 인상'이라는 부정적 표현보다 '매출 증대'라는 긍정적 결과에 집중하자.", bias: TYPES.FRAMING, next: 'stage_4', rationale: "<strong>[프레이밍 효과]</strong> '매출 증대'라는 긍정적 프레임에 갇혀, '고객에게 부담 전가'라는 부정적 측면을 간과하고 의사결정을 내리는 태도입니다." }
+            ]
+        };
+
+        const story_stage_4 = {
+            quizType: QUIZ_TYPES.LOGICAL_ERROR,
+            story: "무리한 가격 인상에 단골 손님마저 떠나버렸습니다. 텅 빈 카페를 보며 당신은 AI에게 하소연하듯 묻습니다. '떠나간 손님들 다시 오게 하려면 어떻게 해야 해?' AI는 '경쟁 카페 A는 최근 SNS 이벤트를 한 후 방문객이 20% 늘었습니다. 따라서 우리도 SNS 이벤트를 하면 손님이 다시 올 것입니다.'라고 답합니다.",
+            question: "AI가 그럴듯한 성공 사례를 제시합니다. 어떻게 대응하시겠습니까?",
+            solution: "두 사건이 연달아 일어났다고 해서 원인과 결과가 되는 것은 아닙니다(상관관계≠인과관계). A카페의 방문객 증가 이유가 꼭 SNS 이벤트 때문인지, 아니면 신메뉴 출시나 인테리어 개선 등 다른 요인이 있었는지 함께 검토해야 합니다.",
+            options: [
+                { text: "AI가 데이터 기반으로 분석했으니 맞을거야. A카페의 이벤트를 그대로 따라하자.", bias: TYPES.BELIEF, next: 'stage_5', rationale: "<strong>[맹신 편향]</strong> AI의 분석이라는 이유만으로, 상관관계를 인과관계로 비약한 명백한 논리적 오류를 검토 없이 받아들이는 태도입니다." },
+                { text: "요즘 마케팅은 무조건 SNS 바이럴이 대세지. A카페도 그걸로 성공했을 거야. 우리도 인플루언서 마케팅을 하자.", bias: TYPES.REPRESENTATIVENESS, next: 'stage_5', rationale: "<strong>[일반화 오류]</strong> '요즘 마케팅은 SNS'라는 대표적인 공식에 기대어, A카페의 성공 요인을 성급하게 단정하고 우리 가게에 적용하려는 태도입니다." },
+                { text: "'방문객 20% 증가'라는 숫자가 너무 인상적이야. 저렇게 성공하려면 A카페의 전략을 따를 수밖에 없어.", bias: TYPES.ANCHORING, next: 'stage_5', rationale: "<strong>[정박 효과]</strong> '20% 증가'라는 강력한 결과에 생각이 고정되어, 그 원인에 다른 가능성이 있을 수 있다는 점을 비판적으로 검토하지 못하게 되는 것입니다." },
+                { text: "'성공 사례'라는 긍정적인 틀 안에서 보니 AI의 제안이 매우 합리적으로 보여. 이대로 추진하자.", bias: TYPES.FRAMING, next: 'stage_5', rationale: "<strong>[프레이밍 효과]</strong> AI가 제시한 '성공 사례'라는 긍정적인 프레임 때문에, 주장의 논리적 결함을 검토하기보다 긍정적으로 수용하게 되는 태도입니다." }
+            ]
+        };
+
+        const story_stage_5 = {
+            quizType: QUIZ_TYPES.SUMMARIZATION_DISTORTION,
+            story: "큰 돈을 쓴 SNS 이벤트는 아무 효과가 없었습니다. '도대체 뭐가 문제야?' 당신은 지푸라기라도 잡는 심정으로 고객 리뷰 100건을 AI에게 던져주며 요약을 명령합니다. AI의 요약: '고객들은 '대소동' 게임이 너무 복잡하고 어렵다고 불평합니다.'",
+            question: "AI가 고객 리뷰를 부정적으로 요약했습니다. 당신의 선택은?",
+            solution: "AI의 요약은 핵심 뉘앙스를 왜곡하거나 특정 부분을 부각/누락할 수 있습니다. AI 요약에는 '...복잡하지만 익숙해지니 정말 재미있다'는 긍정적 의견이 누락되었습니다. 반드시 원문 데이터를 샘플링하여 직접 확인하고 전체적인 맥락을 파악해야 합니다.",
+            options: [
+                { text: "AI가 100건이나 분석했으니 정확하겠지. 손님들이 싫어하는 '대소동' 게임을 당장 치워버리자.", bias: TYPES.BELIEF, next: 'stage_6', rationale: "<strong>[맹신 편향]</strong> AI의 요약 능력을 비판 없이 신뢰하고, 요약 과정에서 발생한 심각한 뉘앙스 왜곡을 확인하지 않고 성급하게 행동하는 태도입니다." },
+                { text: "요즘 사람들은 원래 어려운 게임 싫어해. '대소동'도 그런 게임 중 하나였을 뿐이야.", bias: TYPES.REPRESENTATIVENESS, next: 'stage_6', rationale: "<strong>[일반화 오류]</strong> '요즘 사람들은 어려운 게임을 싫어한다'는 자신의 편견에 AI의 요약 결과를 끼워 맞추며, 긍정적 리뷰의 존재 가능성을 무시하는 태도입니다." },
+                { text: "'복잡하고 어렵다'는 첫 요약 문장이 머리에 박혔어. 긍정적인 의견이 있었을 거란 생각은 들지 않아.", bias: TYPES.ANCHORING, next: 'stage_6', rationale: "<strong>[정박 효과]</strong> AI가 제시한 부정적인 첫 요약문에 생각이 고정되어, 실제로는 긍정적인 맥락이 있었을 것이라는 다른 가능성을 탐색하지 못하는 것입니다." },
+                { text: "'고객 불평'이라는 부정적인 표현 때문에 심각하게 느껴져. 원문을 읽을 필요 없이 빨리 조치해야 해.", bias: TYPES.FRAMING, next: 'stage_6', rationale: "<strong>[프레이밍 효과]</strong> '불평'이라는 부정적 프레임에 압도되어, 사실 관계를 차분히 확인하기보다 감정적으로 반응하고 즉각적인 결정을 내리려는 태도입니다." }
+            ]
+        };
+
+        const story_stage_6 = {
+            quizType: QUIZ_TYPES.ENTITY_TEMPORAL_ERROR,
+            story: "가게의 유일한 희망이었던 '대소동'마저 치워버렸습니다. 분위기 전환을 위해 '추억의 90년대 레트로 파티'를 열기로 하고, AI에게 '힙한 90년대 게임 디자이너 추천해줘!'라고 묻습니다. AI는 '90년대의 전설, Reiner Knizia가 디자인한 <카탄>으로 이벤트를 여세요!'라고 추천합니다.",
+            question: "AI가 구체적인 디자이너와 게임을 추천했습니다. 어떻게 하시겠습니까?",
+            solution: "<카탄>은 Klaus Teuber가 1995년에, Reiner Knizia는 <티그리스&유프라테스>를 1997년에 발표했습니다. AI는 유명한 개체(디자이너, 게임)를 잘못 연결하기 쉽습니다. 위키피디아나 전문 사이트에서 인물과 작품 정보를 교차 확인해야 합니다.",
+            options: [
+                { text: "유명한 디자이너와 게임이니 AI 정보가 정확할 거야. 바로 <카탄> 파티를 준비하자.", bias: TYPES.BELIEF, next: 'stage_7', rationale: "<strong>[맹신 편향]</strong> AI가 제시한 정보가 그럴듯하다는 이유만으로, 역사적 사실 관계를 확인하지 않고 그대로 믿어버리는 태도입니다." },
+                { text: "90년대 게임은 다 비슷비슷하지 않나? 디자이너가 누구든 <카탄>이 유명하니까 그걸로 하면 문제 없겠지.", bias: TYPES.REPRESENTATIVENESS, next: 'stage_7', rationale: "<strong>[일반화 오류]</strong> '레트로 게임'이라는 카테고리로 묶어버리고, 디자이너와 작품의 고유한 역사적 사실을 무시하는 성급한 태도입니다." },
+                { text: "먼저 추천된 'Reiner Knizia'와 '<카탄>'에 마음이 꽂혔어. 다른 게임은 검토할 필요도 없어.", bias: TYPES.ANCHORING, next: 'stage_7', rationale: "<strong>[정박 효과]</strong> AI가 처음 제시한 조합에 생각이 고정되어, 사실 관계가 틀렸을 가능성이나 더 나은 대안을 찾아보지 않는 태도입니다." },
+                { text: "'90년대의 전설'이라는 표현이 마음에 들어. 이 문구를 사용하면 이벤트가 성공할 것 같아.", bias: TYPES.FRAMING, next: 'stage_7', rationale: "<strong>[프레이밍 효과]</strong> '전설'이라는 권위적인 프레임에 영향을 받아, 정보의 사실 여부를 검증하기보다 감성적으로 수용하고 마케팅에 활용하려는 태도입니다." }
+            ]
+        };
+
+        const story_stage_7 = {
+            quizType: QUIZ_TYPES.OUTDATED_INFORMATION,
+            story: "이벤트는 망신으로 끝났습니다. 이제 남은 건 체스 마니아들을 공략하는 것뿐. 당신은 '공식 체스 토너먼트'를 열기로 하고 AI에게 규칙을 물어봅니다.",
+            question: "AI가 제시한 체스 규칙을 어떻게 활용하시겠습니까?",
+            solution: "체스 규칙, 특히 '캐슬링'이나 '앙파상' 같은 특수 규칙은 시대에 따라 개정되기도 합니다. AI는 과거 데이터로 학습했기 때문에 최신 규칙을 반영하지 못할 수 있습니다. 국제체스연맹(FIDE) 공식 핸드북 등 최신 규정을 확인해야 합니다.",
+            options: [
+                { text: "체스 같은 고전 게임 규칙은 바뀔 리가 없어. AI가 알려준 규칙을 인쇄해서 사용하자.", bias: TYPES.BELIEF, next: 'stage_8', rationale: "<strong>[맹신 편향]</strong> '오래된 것은 변하지 않는다'는 믿음으로 AI 정보의 최신성을 점검하지 않고, 구식 정보를 그대로 활용하려는 태도입니다." },
+                { text: "우리 동네에서 하던 규칙이랑 비슷한데? 이 정도면 문제 없겠지.", bias: TYPES.REPRESENTATIVENESS, next: 'stage_8', rationale: "<strong>[일반화 오류]</strong> 자신이 경험한 비공식적인 규칙(로컬 룰)을 공식 규칙과 동일시하며, AI가 제시한 구식 정보의 문제점을 인지하지 못하는 태도입니다." },
+                { text: "규칙이 스무 개가 넘네. 맨 위에 있는 '킹은 한 칸씩만 움직인다'는 첫 규칙만 제대로 지키면 큰 문제 없겠지.", bias: TYPES.ANCHORING, next: 'stage_8', rationale: "<strong>[정박 효과]</strong> 가장 기본적이고 익숙한 첫 규칙에만 생각이 고정되어, 승패에 영향을 줄 수 있는 다른 중요한 최신 규칙들을 간과하는 태도입니다." },
+                { text: "'공식 규칙'이라고 하니 신뢰가 가. '로컬 룰'이 아니라 '공식 룰'로 진행한다고 강조해서 대회를 열자.", bias: TYPES.FRAMING, next: 'stage_8', rationale: "<strong>[프레이밍 효과]</strong> AI가 제시한 정보에 '공식'이라는 프레임을 씌워 신뢰도를 높이고, 그 내용이 최신 정보인지 검증하는 과정을 생략하는 태도입니다." }
+            ]
+        };
+        
+        const story_stage_8 = {
+            quizType: QUIZ_TYPES.INTERACTION_ERROR,
+            story: "토너먼트는 싸움판이 되고 카페 평판은 나락으로 떨어졌습니다. 남은 돈은 10만원. 당신은 AI에게 마지막으로 묻습니다. '10만원으로 이 망한 가게 이미지 바꿀 방법 좀... 제발... 보드게임 말고...'",
+            question: "AI가 당신의 핵심적인 제약조건을 모두 무시한 채 '보드게임 디자이너를 초청하여 고가의 한정판 게임 사인회를 여세요!'라고 답했습니다. 어떻게 하시겠습니까?",
+            solution: "AI는 복잡한 제약조건이나 부정형('~가 아닌') 명령을 자주 놓칩니다. 지시를 제대로 이해하지 못했다고 판단하고, '10만원 이하 예산', '가족 대상 이벤트'처럼 조건을 더욱 단순하고 명확하게 나누어 다시 질문해야 합니다.",
+            options: [
+                { text: "내 질문 방식이 잘못됐나보다. AI가 더 좋은 아이디어를 준 것일지도 몰라. 대출이라도 받아서 사인회를 열자.", bias: TYPES.BELIEF, next: 'end', rationale: "<strong>[맹신 편향]</strong> AI가 명백히 지시를 어겼음에도 불구하고, 그 결과를 '더 나은 제안'이라고 합리화하며 자신의 판단력을 AI에 완전히 의존하는 태도입니다." },
+                { text: "AI는 원래 이렇게 엉뚱한 대답을 잘 해. 그냥 무시하고 내 아이디어를 짜는 게 낫겠어.", bias: TYPES.REPRESENTATIVENESS, next: 'end', rationale: "<strong>[일반화 오류]</strong> AI의 특정 오류를 '원래 그렇다'고 성급하게 일반화하고, 질문을 개선하여 더 나은 답변을 얻으려는 시도를 포기하는 태도입니다." },
+                { text: "'디자이너 초청 사인회'라는 아이디어가 너무 강력해서 '10만원 예산' 같은 제약조건은 잊어버렸다.", bias: TYPES.ANCHORING, next: 'end', rationale: "<strong>[정박 효과]</strong> AI가 제시한 그럴듯한 아이디어에 생각이 꽂혀, 자신이 내세웠던 가장 중요한 제약조건들을 스스로 무시하게 되는 현상입니다." },
+                { text: "AI가 내 지시를 무시한 건 '창의적인 재해석'을 한 거야. 이 위기를 극복하려면 이런 파격적인 발상이 필요해.", bias: TYPES.FRAMING, next: 'end', rationale: "<strong>[프레이밍 효과]</strong> 명백한 AI의 오류를 '창의적 재해석'이라는 긍정적인 프레임으로 받아들여, 비합리적인 결정을 내리려는 위험한 태도입니다." }
+            ]
+        };
+
+        const storyTree = {
+            'stage_1': story_stage_1,
+            'stage_2': story_stage_2,
+            'stage_3': story_stage_3,
+            'stage_4': story_stage_4,
+            'stage_5': story_stage_5,
+            'stage_6': story_stage_6,
+            'stage_7': story_stage_7,
+            'stage_8': story_stage_8,
+        };
+
+        const startContainer = document.getElementById('start-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const startQuizButton = document.getElementById('start-quiz-button');
+        
+        const storyEl = document.getElementById('story');
+        const questionEl = document.getElementById('question');
+        const answerOptionsEl = document.getElementById('answer-options');
+        const nextButton = document.getElementById('next-button');
+        const restartButton = document.getElementById('restart-button');
+        const rationaleTextEl = document.getElementById('rationale-text');
+        const quizTypeEl = document.getElementById('quiz-type');
+        const solutionContainer = document.getElementById('solution-container');
+        const solutionText = document.getElementById('solution-text');
+        const progressBar = document.getElementById('progress-bar');
+        const stageCounterEl = document.getElementById('stage-counter');
+        const profileNameEl = document.getElementById('profile-name');
+        const profileDescriptionEl = document.getElementById('profile-description');
+        const profileStrengthEl = document.getElementById('profile-strength');
+        const profileWeaknessEl = document.getElementById('profile-weakness');
+        
+        let currentStageId = 'stage_1';
+        let stageCounter = 0;
+        let typeCounts = {};
+
+        function initializeApp() {
+            startContainer.classList.remove('hidden');
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.add('hidden');
+        }
+
+        function startQuiz() {
+            currentStageId = 'stage_1';
+            stageCounter = 1;
+            
+            typeCounts = Object.values(TYPES).reduce((acc, type) => {
+                acc[type] = 0;
+                return acc;
+            }, {});
+            
+            startContainer.classList.add('hidden');
+            resultsContainer.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+
+            nextButton.classList.add('hidden');
+            nextButton.textContent = '다음 →';
+            
+            // Clear any previous final messages
+            const existingFinalMessage = resultsContainer.querySelector('.final-message');
+            if(existingFinalMessage) {
+                existingFinalMessage.remove();
+            }
+
+            showStage();
+            updateProgress();
+        }
+
+        function showStage() {
+            resetState();
+            const currentStage = storyTree[currentStageId];
+
+            quizTypeEl.textContent = `오류 유형: ${currentStage.quizType}`;
+            storyEl.textContent = currentStage.story;
+            questionEl.textContent = currentStage.question;
+            
+            currentStage.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option.text;
+                button.classList.add('quiz-option', 'w-full', 'text-left', 'p-4', 'border', 'border-slate-300', 'rounded-lg', 'bg-slate-50', 'hover:bg-slate-200');
+                
+                button.dataset.bias = option.bias;
+                button.dataset.next = option.next;
+                button.dataset.rationale = option.rationale;
+                
+                button.addEventListener('click', selectAnswer);
+                answerOptionsEl.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            while (answerOptionsEl.firstChild) {
+                answerOptionsEl.removeChild(answerOptionsEl.firstChild);
+            }
+            nextButton.classList.add('hidden');
+            rationaleTextEl.classList.remove('show');
+            rationaleTextEl.innerHTML = '';
+            solutionContainer.classList.remove('show');
+            solutionText.textContent = '';
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target.closest('button');
+            if (!selectedButton) return;
+            
+            Array.from(answerOptionsEl.children).forEach(btn => btn.classList.remove('selected-answer'));
+            
+            selectedButton.classList.add('selected-answer');
+            
+            rationaleTextEl.innerHTML = selectedButton.dataset.rationale;
+            rationaleTextEl.classList.add('show');
+            
+            const currentStage = storyTree[currentStageId];
+            solutionText.textContent = currentStage.solution;
+            solutionContainer.classList.add('show');
+            
+            nextButton.dataset.selectedBias = selectedButton.dataset.bias;
+            nextButton.dataset.nextStage = selectedButton.dataset.next;
+            nextButton.classList.remove('hidden');
+
+            if (nextButton.dataset.nextStage === 'end') {
+                nextButton.textContent = '결과 보기 →';
+            }
+        }
+
+        function handleNextButtonClick() {
+            const selectedBias = nextButton.dataset.selectedBias;
+            const nextStageId = nextButton.dataset.nextStage;
+
+            if (!selectedBias || !nextStageId) return;
+
+            typeCounts[selectedBias]++;
+
+            if (nextStageId === 'end') {
+                const finalMessage = document.createElement('p');
+                finalMessage.innerHTML = "<strong>최종 결과:</strong><br>당신(철수)의 카페는 결국 심각한 경영 위기에 처했습니다. 'AI만 있으면 돼!'라던 자신감은, AI 정보의 함정을 비판적으로 검토하는 '리터러시'가 없으면 얼마나 위험한지 알려주는 교훈이 되었습니다.";
+                finalMessage.classList.add('final-message', 'mt-4', 'p-4', 'bg-red-50', 'text-red-800', 'border', 'border-red-200', 'rounded-lg', 'text-center', 'font-semibold');
+                const profileDisplayEl = document.getElementById('profile-display');
+                resultsContainer.insertBefore(finalMessage, profileDisplayEl);
+
+                showResults();
+            } else {
+                currentStageId = nextStageId;
+                stageCounter++;
+                showStage();
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const totalStages = Object.keys(storyTree).length;
+            stageCounterEl.textContent = `상황 ${stageCounter} / ${totalStages}`;
+            const progressPercentage = (stageCounter / totalStages) * 100; 
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+        
+        function showResults() {
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            
+            const sortedTypes = Object.entries(typeCounts).sort(([,a],[,b]) => b-a);
+            const dominantType = sortedTypes.length > 0 ? sortedTypes[0][0] : Object.values(TYPES)[0];
+            let profile = {};
+            
+            switch(dominantType) {
+                case TYPES.BELIEF:
+                    profile = { name: 'AI 절대 신봉형', description: 'AI의 권위를 높게 평가하며, 그럴듯한 정보에 대해 비판 없이 수용하는 경향이 있습니다.', strength: 'AI를 신뢰하고 적극적으로 활용하여 빠르게 정보를 습득하지만, 그 정보가 거짓일 경우 치명적인 판단 오류를 겪을 수 있습니다.', weakness: '모든 AI 답변 끝에 "이 정보는 틀릴 수 있으니, 중요한 내용은 반드시 공식 출처에서 확인해"라고 스스로에게 상기시켜 보세요.' };
+                    break;
+                case TYPES.REPRESENTATIVENESS:
+                    profile = { name: '성급한 일반화형', description: '소수의 사례나 전형적인 이미지에 의존하여 전체를 판단하려는 경향이 있습니다.', strength: '복잡한 문제를 단순화하여 빠르게 결론을 내리지만, 그 과정에서 중요한 세부사항이나 통계적 사실을 무시할 위험이 큽니다.', weakness: "AI가 제시한 사례가 '전체'를 설명하는지, 아니면 그저 '일부'의 특징일 뿐인지 항상 질문하는 습관을 들이세요." };
+                    break;
+                case TYPES.ANCHORING:
+                     profile = { name: '첫인상 의존형', description: 'AI가 처음 제시한 정보(특히 숫자)에 생각이 묶여, 이후의 판단이 크게 좌우되는 경향이 있습니다.', strength: '초기 정보를 바탕으로 빠르게 판단의 기준을 세우지만, 그 기준이 잘못되었을 경우 올바른 결론에서 크게 벗어날 수 있습니다.', weakness: 'AI의 답변을 본 후, 의도적으로 "만약 이 첫 정보가 없다면 어떻게 판단할까?"라고 질문을 던져 처음의 기준점에서 벗어나 보세요.' };
+                    break;
+                case TYPES.FRAMING:
+                    profile = { name: '분위기 민감형', description: '정보의 핵심 내용보다, 정보가 제시되는 방식(긍정적/부정적 표현)에 더 크게 영향을 받습니다.', strength: '글의 뉘앙스나 숨은 의도를 잘 파악하지만, 사실 관계를 따지기보다 감성적인 판단에 치우칠 위험이 있습니다.', weakness: 'AI가 제시한 정보를 의도적으로 반대되는 표현(긍정→부정, 손실→이득)으로 바꾸어 다시 읽어보며, 내 판단이 달라지는지 확인해보세요.' };
+                    break;
+                default:
+                    profile = { name: '분석 필요', description: '진단 결과가 명확하지 않습니다. 다시 시도해보세요.', strength: '-', weakness: '-' };
+            }
+            
+            profileNameEl.textContent = profile.name;
+            profileDescriptionEl.textContent = profile.description;
+            profileStrengthEl.textContent = profile.strength;
+            profileWeaknessEl.textContent = profile.weakness;
+
+            const typeCountsEl = document.getElementById('type-counts');
+            typeCountsEl.innerHTML = '';
+            
+            const totalAnswers = stageCounter;
+            Object.entries(TYPES).forEach(([key, type]) => {
+                const count = typeCounts[type] || 0;
+                const percentage = totalAnswers > 0 ? (count / totalAnswers) * 100 : 0;
+                const typeEl = document.createElement('div');
+                typeEl.classList.add('flex', 'items-center', 'justify-between', 'text-sm', 'p-1');
+                typeEl.innerHTML = `
+                    <span class="font-medium text-slate-600 w-1/3">${type}</span>
+                    <div class="flex items-center w-2/3">
+                        <div class="w-full bg-slate-200 rounded-full h-4 mr-2">
+                            <div class="bg-orange-500 h-4 rounded-full flex items-center justify-center text-white text-xs font-bold" style="width: ${percentage}%">
+                                ${Math.round(percentage)}%
+                            </div>
+                        </div>
+                        <span class="font-semibold text-slate-700 w-12 text-right">${count}회</span>
+                    </div>
+                `;
+                typeCountsEl.appendChild(typeEl);
+            });
+        }
+
+        startQuizButton.addEventListener('click', startQuiz);
+        nextButton.addEventListener('click', handleNextButtonClick);
+        restartButton.addEventListener('click', initializeApp);
+
+        initializeApp();
+    </script>
+
+</body>
 </html>
+
