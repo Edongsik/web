@@ -1,496 +1,373 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EFT 앱 프로토타입 (단일 HTML)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { box-sizing: border-box; }
-    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .progress-bar { background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%); }
-    .timer-circle { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-    .fade-in { animation: fadeIn .5s ease-in; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    .chart-segment { transition: all .3s ease; }
-    .chart-segment:hover { transform: scale(1.02); }
-    .focus-ring:focus { outline: 2px solid #6366f1; outline-offset: 2px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EFT 앱 프로토타입</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%);
+        }
+        
+        .timer-circle {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chart-segment {
+            transition: all 0.3s ease;
+        }
+        
+        .chart-segment:hover {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans">
-  <!-- 온보딩 -->
-  <section id="onboarding" class="min-h-screen gradient-bg flex flex-col items-center justify-center text-white px-6">
-    <div class="text-center fade-in">
-      <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
-        <svg class="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-      </div>
-      <h1 class="text-3xl font-bold mb-4">EFT</h1>
-      <p class="text-lg mb-12 leading-relaxed max-w-sm mx-auto">
-        미래의 나를 상상하고,<br/>오늘의 선택을 바꾸다
-      </p>
-      <button id="startBtn" class="bg-white text-blue-700 px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus-ring">
-        시작하기
-      </button>
-    </div>
-  </section>
-
-  <!-- 대시보드 -->
-  <section id="dashboard" class="min-h-screen bg-gray-50 hidden">
-    <header class="bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-800 mb-3">오늘의 진행률</h2>
-      <div class="w-full bg-gray-200 rounded-full h-3" aria-hidden="true">
-        <div id="progressBar" class="progress-bar h-3 rounded-full" style="width: 0%"></div>
-      </div>
-      <p id="progressText" class="text-sm text-gray-600 mt-2">0% 완료</p>
-    </header>
-
-    <main class="p-6">
-      <article class="bg-white rounded-2xl p-6 card-shadow fade-in">
-        <div class="text-center">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-2">오늘의 EFT 세션</h3>
-          <p class="text-gray-600 mb-6">미래를 상상하고 선택의 힘을 기르세요</p>
-          <button id="toPromptBtn" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors focus-ring" aria-label="EFT 세션 시작">
-            시작하기
-          </button>
-        </div>
-      </article>
-    </main>
-
-    <!-- 탭바 (더미) -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-3" aria-label="하단 탭">
-      <div class="flex justify-around">
-        <button class="flex flex-col items-center py-2 text-blue-600 focus-ring" aria-label="홈">
-          <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-          <span class="text-xs">홈</span>
-        </button>
-        <button class="flex flex-col items-center py-2 text-gray-400 focus-ring" aria-label="기록">
-          <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-          <span class="text-xs">기록</span>
-        </button>
-        <button class="flex flex-col items-center py-2 text-gray-400 focus-ring" aria-label="리포트">
-          <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
-          <span class="text-xs">리포트</span>
-        </button>
-        <button class="flex flex-col items-center py-2 text-gray-400 focus-ring" aria-label="설정">
-          <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
-          <span class="text-xs">설정</span>
-        </button>
-      </div>
-    </nav>
-  </section>
-
-  <!-- EFT 프롬프트 -->
-  <section id="prompt" class="min-h-screen bg-gray-50 hidden">
-    <div class="p-6">
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">오늘의 미래 상상</h2>
-        <p class="text-gray-600">AI가 제안하는 미래의 모습을 상상해보세요</p>
-      </div>
-
-      <article class="bg-white rounded-2xl p-6 card-shadow mb-6 fade-in">
-        <div class="text-center mb-6">
-          <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-          </div>
-          <div class="bg-blue-50 rounded-xl p-4 mb-4">
-            <p id="aiPrompt" class="text-gray-800 leading-relaxed">
-              "3개월 뒤 시험장에서 합격 통보를 받고<br/>환하게 웃는 당신의 모습"
+    <!-- 온보딩 화면 -->
+    <div id="onboarding" class="min-h-screen gradient-bg flex flex-col items-center justify-center text-white px-6">
+        <div class="text-center fade-in">
+            <!-- 앱 로고 -->
+            <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                <svg class="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            
+            <!-- 슬로건 -->
+            <h1 class="text-3xl font-bold mb-4">EFT</h1>
+            <p class="text-lg mb-12 leading-relaxed max-w-sm mx-auto">
+                미래의 나를 상상하고,<br>
+                오늘의 선택을 바꾸다
             </p>
-          </div>
+            
+            <!-- 시작하기 버튼 -->
+            <button onclick="showScreen('dashboard')" class="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                시작하기
+            </button>
         </div>
-
-        <div class="mb-6">
-          <label for="eftText" class="block text-sm font-medium text-gray-700 mb-2">내가 상상한 장면을 적어보세요</label>
-          <textarea id="eftText" class="w-full p-4 border border-gray-200 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows="4" placeholder="미래의 성공한 모습을 자세히 상상해보세요..."></textarea>
-        </div>
-
-        <div class="mb-6">
-          <label for="eftVivid" class="block text-sm font-medium text-gray-700 mb-2">
-            지금 상상이 얼마나 생생했나요? <span id="vividVal" class="text-blue-600 font-semibold">3</span>/5
-          </label>
-          <input id="eftVivid" type="range" min="1" max="5" value="3" class="w-full"
-                 oninput="document.getElementById('vividVal').textContent=this.value" />
-        </div>
-
-        <button id="toGameBtn" class="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-4 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 focus-ring">
-          상상 완료 → 다음 단계
-        </button>
-      </article>
     </div>
-  </section>
 
-  <!-- 지연선택 게임 -->
-  <section id="game" class="min-h-screen bg-gray-50 hidden">
-    <div class="p-6">
-      <div class="text-center mb-6">
-        <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg timer-circle">
-          <span id="timer" class="text-2xl font-bold text-blue-600" aria-live="polite">00:30</span>
+    <!-- 메인 대시보드 -->
+    <div id="dashboard" class="min-h-screen bg-gray-50 hidden">
+        <!-- 상단 진행률 -->
+        <div class="bg-white p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3">오늘의 진행률</h2>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+                <div class="progress-bar h-3 rounded-full" style="width: 40%"></div>
+            </div>
+            <p class="text-sm text-gray-600 mt-2">40% 완료</p>
         </div>
-        <h2 class="text-xl font-bold text-gray-800">선택의 시간</h2>
-      </div>
 
-      <div class="space-y-4 mb-4">
-        <!-- 즉시 보상 -->
-        <button id="immediateBtn"
-                class="w-full text-left bg-white rounded-2xl p-6 card-shadow border-2 border-transparent hover:border-red-300 transition-all cursor-pointer focus-ring"
-                aria-label="즉시 보상 선택(지금 점수 받기)">
-          <div class="flex items-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mr-4">
-              <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 6L12 10.5 8.5 8 12 5.5 15.5 8zM12 13.5l3.5 2.5L12 18.5 8.5 16l3.5-2.5z"/>
-              </svg>
+        <!-- 중앙 카드 -->
+        <div class="p-6">
+            <div class="bg-white rounded-2xl p-6 card-shadow fade-in">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">오늘의 EFT 세션</h3>
+                    <p class="text-gray-600 mb-6">미래를 상상하고 선택의 힘을 기르세요</p>
+                    <button onclick="showScreen('prompt')" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+                        시작하기
+                    </button>
+                </div>
             </div>
-            <div>
-              <h3 id="nowLabel" class="text-lg font-bold text-gray-800">지금 1점 받기</h3>
-              <p class="text-gray-600">즉시 보상을 받으세요</p>
-            </div>
-          </div>
-        </button>
-
-        <!-- 지연 보상 -->
-        <button id="delayedBtn"
-                class="w-full text-left bg-white rounded-2xl p-6 card-shadow border-2 border-transparent hover:border-blue-300 transition-all cursor-pointer focus-ring"
-                aria-label="지연 보상 선택(기다리면 더 큰 점수 받기)">
-          <div class="flex items-center">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-              <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-            </div>
-            <div>
-              <h3 id="laterLabel" class="text-lg font-bold text-gray-800">30초 기다리면 3점 받기</h3>
-              <p class="text-gray-600">조금 기다리면 더 큰 보상!</p>
-            </div>
-          </div>
-        </button>
-      </div>
-
-      <!-- 대기 중 제어 -->
-      <div class="flex justify-center gap-3 mt-2">
-        <button id="giveUpBtn" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hidden focus-ring" aria-label="포기하기">포기하기(-1점)</button>
-        <button id="switchBtn" class="px-4 py-2 rounded-lg bg-red-500 text-white hidden focus-ring" aria-label="지금 전환">지금 전환(+1점)</button>
-      </div>
-
-      <!-- 캐릭터 -->
-      <div class="text-center mt-6">
-        <div id="character" class="w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto">
-          <span class="text-4xl" aria-hidden="true">🤔</span>
         </div>
-        <p class="text-gray-600 mt-4">어떤 선택을 하시겠어요?</p>
-      </div>
+
+        <!-- 하단 탭바 -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-3">
+            <div class="flex justify-around">
+                <button class="flex flex-col items-center py-2 text-blue-600">
+                    <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    <span class="text-xs">홈</span>
+                </button>
+                <button class="flex flex-col items-center py-2 text-gray-400">
+                    <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                    </svg>
+                    <span class="text-xs">기록</span>
+                </button>
+                <button class="flex flex-col items-center py-2 text-gray-400">
+                    <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+                    </svg>
+                    <span class="text-xs">리포트</span>
+                </button>
+                <button class="flex flex-col items-center py-2 text-gray-400">
+                    <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    </svg>
+                    <span class="text-xs">설정</span>
+                </button>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <!-- 결과 -->
-  <section id="result" class="min-h-screen bg-gray-50 hidden">
-    <div class="p-6">
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">오늘의 결과</h2>
-        <p class="text-gray-600">당신의 선택을 분석해보았어요</p>
-      </div>
+    <!-- EFT 프롬프트 화면 -->
+    <div id="prompt" class="min-h-screen bg-gray-50 hidden">
+        <div class="p-6">
+            <!-- 상단 제목 -->
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">오늘의 미래 상상</h2>
+                <p class="text-gray-600">AI가 제안하는 미래의 모습을 상상해보세요</p>
+            </div>
 
-      <!-- 원형 차트 -->
-      <article class="bg-white rounded-2xl p-6 card-shadow mb-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">선택 비율</h3>
-        <div class="flex justify-center mb-4">
-          <svg id="donut" width="200" height="200" viewBox="0 0 200 200" class="transform -rotate-90" aria-hidden="true">
-            <!-- 배경 원 -->
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="20"/>
-            <!-- 지연 선택 -->
-            <circle id="arcDelayed" cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="20" stroke-dasharray="0 0" class="chart-segment"/>
-            <!-- 즉시 선택 -->
-            <circle id="arcImmediate" cx="100" cy="100" r="80" fill="none" stroke="#ef4444" stroke-width="20" stroke-dasharray="0 0" class="chart-segment"/>
-          </svg>
-        </div>
-        <div class="flex justify-center space-x-6">
-          <div class="flex items-center">
-            <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
-            <span id="delayedPctText" class="text-sm text-gray-600">지연 선택 0%</span>
-          </div>
-          <div class="flex items-center">
-            <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
-            <span id="immediatePctText" class="text-sm text-gray-600">즉시 선택 0%</span>
-          </div>
-        </div>
-      </article>
+            <!-- 중앙 카드 -->
+            <div class="bg-white rounded-2xl p-6 card-shadow mb-6 fade-in">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <div class="bg-blue-50 rounded-xl p-4 mb-4">
+                        <p class="text-gray-800 leading-relaxed">
+                            "3개월 뒤 시험장에서 합격 통보를 받고<br>
+                            환하게 웃는 당신의 모습"
+                        </p>
+                    </div>
+                </div>
 
-      <!-- 요약 -->
-      <article class="bg-white rounded-2xl p-6 card-shadow mb-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">성장 요약</h3>
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-sm text-gray-600">자제력(지연 선택)</span>
-          <span id="summaryCount" class="text-sm font-semibold text-blue-600">+0</span>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-3 mb-2" aria-hidden="true">
-          <div id="growthBar" class="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full" style="width: 0%"></div>
-        </div>
-        <p id="summaryText" class="text-sm text-gray-600">오늘의 선택 데이터를 기반으로 요약합니다.</p>
-      </article>
+                <!-- 입력창 -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">내가 상상한 장면을 적어보세요</label>
+                    <textarea 
+                        class="w-full p-4 border border-gray-200 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                        rows="4" 
+                        placeholder="미래의 성공한 모습을 자세히 상상해보세요...">
+                    </textarea>
+                </div>
 
-      <div class="grid grid-cols-1 gap-3">
-        <button id="endSessionBtn" class="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 focus-ring">
-          세션 종료 (대시보드로)
-        </button>
-        <button id="newSessionBtn" class="w-full bg-gray-800 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all focus-ring">
-          새 세션 시작
-        </button>
-      </div>
+                <!-- 다음 단계 버튼 -->
+                <button onclick="showScreen('game')" class="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-4 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                    상상 완료 → 다음 단계
+                </button>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <script>
-    // ===== 연구 파라미터 =====
-    const PARAMS = {
-      delays: [10, 20, 30, 45],     // 지연 시간(초)
-      ratios: [1.5, 2.0, 3.0],      // R = A_later / A_now
-      nowBase: 1,                   // 즉시 보상 점수
-      trialsPerSession: 5           // 1세션 트라이얼 수(4~6 권장)
-    };
+    <!-- 지연선택 게임 화면 -->
+    <div id="game" class="min-h-screen bg-gray-50 hidden">
+        <div class="p-6">
+            <!-- 상단 타이머 -->
+            <div class="text-center mb-8">
+                <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg timer-circle">
+                    <span id="timer" class="text-2xl font-bold text-blue-600">00:30</span>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">선택의 시간</h2>
+            </div>
 
-    // ===== 상태 =====
-    const state = {
-      pid: 'PILOT',                 // 실제 연구에서는 익명 ID 주입
-      session: 1,
-      trial: 0,
-      R: null, D: null,
-      timerId: null,
-      timeLeft: 0,
-      waiting: false,
-      points: 0,
-      logs: JSON.parse(localStorage.getItem('eft_logs') || '[]'),
-      sessionId: Date.now()
-    };
+            <!-- 선택 카드들 -->
+            <div class="space-y-4 mb-8">
+                <!-- 즉시 보상 -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border-2 border-transparent hover:border-red-300 transition-all cursor-pointer" onclick="makeChoice('immediate')">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 6L12 10.5 8.5 8 12 5.5 15.5 8zM12 13.5l3.5 2.5L12 18.5 8.5 16l3.5-2.5z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">지금 1점 받기</h3>
+                            <p class="text-gray-600">즉시 보상을 받으세요</p>
+                        </div>
+                    </div>
+                </div>
 
-    // ===== 유틸 =====
-    const $ = (sel) => document.querySelector(sel);
-    const show = (id) => document.getElementById(id).classList.remove('hidden');
-    const hide = (id) => document.getElementById(id).classList.add('hidden');
-    const randPick = (arr) => arr[Math.floor(Math.random()*arr.length)];
+                <!-- 지연 보상 -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border-2 border-transparent hover:border-blue-300 transition-all cursor-pointer" onclick="makeChoice('delayed')">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">30초 기다리면 3점 받기</h3>
+                            <p class="text-gray-600">조금 기다리면 더 큰 보상!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    function showScreen(id){
-      ['onboarding','dashboard','prompt','game','result'].forEach(hide);
-      show(id);
-      if(id==='dashboard') updateProgress();
-      if(id==='game') nextTrial();
-      if(id==='result') renderResults();
-    }
+            <!-- 캐릭터 -->
+            <div class="text-center">
+                <div id="character" class="w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto">
+                    <span class="text-4xl">🤔</span>
+                </div>
+                <p class="text-gray-600 mt-4">어떤 선택을 하시겠어요?</p>
+            </div>
+        </div>
+    </div>
 
-    function sessionCompleted(){ return state.trial >= PARAMS.trialsPerSession; }
+    <!-- 결과 피드백 화면 -->
+    <div id="result" class="min-h-screen bg-gray-50 hidden">
+        <div class="p-6">
+            <!-- 상단 제목 -->
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">오늘의 결과</h2>
+                <p class="text-gray-600">당신의 선택을 분석해보았어요</p>
+            </div>
 
-    function updateProgress(){
-      const pct = sessionCompleted() ? 100 : Math.floor((state.trial / PARAMS.trialsPerSession) * 100);
-      $('#progressBar').style.width = pct + '%';
-      $('#progressText').textContent = `${pct}% 완료`;
-    }
+            <!-- 원형 차트 -->
+            <div class="bg-white rounded-2xl p-6 card-shadow mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">선택 비율</h3>
+                <div class="flex justify-center mb-4">
+                    <svg width="200" height="200" viewBox="0 0 200 200" class="transform -rotate-90">
+                        <!-- 지연 선택 (70%) -->
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="20"/>
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="20" 
+                                stroke-dasharray="351.86" stroke-dashoffset="105.56" class="chart-segment"/>
+                        <!-- 즉시 선택 (30%) -->
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#ef4444" stroke-width="20" 
+                                stroke-dasharray="105.56" stroke-dashoffset="0" class="chart-segment"/>
+                    </svg>
+                </div>
+                <div class="flex justify-center space-x-6">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
+                        <span class="text-sm text-gray-600">지연 선택 70%</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                        <span class="text-sm text-gray-600">즉시 선택 30%</span>
+                    </div>
+                </div>
+            </div>
 
-    // ===== EFT 저장 → 게임 시작 =====
-    function saveEFTAndGo(){
-      const txt = ($('#eftText')?.value || '').trim();
-      const vivid = Number($('#eftVivid')?.value || 3);
-      state.logs.push({
-        type: 'EFT',
-        pid: state.pid,
-        session: state.session,
-        text: txt.slice(0, 300),
-        eft_vividness_1to5: vivid,
-        ts: new Date().toISOString()
-      });
-      localStorage.setItem('eft_logs', JSON.stringify(state.logs));
-      showScreen('game');
-    }
+            <!-- 게이지 -->
+            <div class="bg-white rounded-2xl p-6 card-shadow mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">성장 게이지</h3>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-600">자제력</span>
+                    <span class="text-sm font-semibold text-blue-600">+15</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+                    <div class="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full" style="width: 75%"></div>
+                </div>
+            </div>
 
-    // ===== 트라이얼 루프 =====
-    function nextTrial(){
-      if(sessionCompleted()){ showScreen('result'); return; }
+            <!-- 피드백 메시지 -->
+            <div class="bg-blue-50 rounded-2xl p-6 mb-8">
+                <div class="flex items-start">
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                        <span class="text-xl">💪</span>
+                    </div>
+                    <div>
+                        <p class="text-gray-800 leading-relaxed">
+                            오늘은 3번의 기다림을 선택했어요! 미래의 보상이 더 가까워졌습니다. 
+                            꾸준한 연습으로 더 나은 선택의 힘을 기르고 있어요.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-      // 난이도 무작위
-      state.R = randPick(PARAMS.ratios);
-      state.D = randPick(PARAMS.delays);
-      state.trial += 1;
+            <!-- 세션 종료 버튼 -->
+            <button onclick="showScreen('dashboard')" class="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                세션 종료
+            </button>
+        </div>
+    </div>
 
-      // 라벨 업데이트
-      const laterPts = Math.round(PARAMS.nowBase * state.R);
-      $('#nowLabel').textContent = `지금 ${PARAMS.nowBase}점 받기`;
-      $('#laterLabel').textContent = `${state.D}초 기다리면 ${laterPts}점 받기`;
+    <script>
+        let currentScreen = 'onboarding';
+        let timerInterval;
+        let timeLeft = 30;
 
-      // 타이머 초기화(지연 선택 시에만 카운트다운 시작)
-      state.timeLeft = state.D;
-      updateTimerDisplay(state.timeLeft);
-      $('#giveUpBtn').classList.add('hidden');
-      $('#switchBtn').classList.add('hidden');
-      state.waiting = false;
+        function showScreen(screenId) {
+            // 모든 화면 숨기기
+            const screens = ['onboarding', 'dashboard', 'prompt', 'game', 'result'];
+            screens.forEach(screen => {
+                document.getElementById(screen).classList.add('hidden');
+            });
+            
+            // 선택된 화면 보이기
+            document.getElementById(screenId).classList.remove('hidden');
+            currentScreen = screenId;
 
-      updateProgress();
-    }
-
-    function makeChoice(type){
-      if(type==='immediate'){
-        pushTrialLog({choice:0, gave_up:0, switched:0, wait_time_sec:0});
-        state.points += PARAMS.nowBase;
-        feedbackFace('immediate');
-        setTimeout(nextTrial, 500);
-        return;
-      }
-      if(type==='delayed'){
-        state.waiting = true;
-        $('#giveUpBtn').classList.remove('hidden');
-        $('#switchBtn').classList.remove('hidden');
-        feedbackFace('delayed-start');
-        startWaitCountdown();
-      }
-    }
-
-    function startWaitCountdown(){
-      clearInterval(state.timerId);
-      const started = Date.now();
-      state.timerId = setInterval(()=>{
-        state.timeLeft -= 1;
-        updateTimerDisplay(state.timeLeft);
-
-        if(state.timeLeft <= 0){
-          clearInterval(state.timerId);
-          const waited = Math.max(0, Math.round((Date.now() - started)/1000));
-          const laterPts = Math.round(PARAMS.nowBase * state.R);
-          state.points += laterPts;
-          pushTrialLog({choice:1, gave_up:0, switched:0, wait_time_sec: waited});
-          feedbackFace('delayed-success');
-          setTimeout(nextTrial, 500);
+            // 게임 화면일 때 타이머 시작
+            if (screenId === 'game') {
+                startTimer();
+            }
         }
-      }, 1000);
 
-      // 포기
-      $('#giveUpBtn').onclick = ()=>{
-        if(!state.waiting) return;
-        clearInterval(state.timerId);
-        state.waiting = false;
-        const waited = state.D - state.timeLeft;
-        pushTrialLog({choice:0, gave_up:1, switched:0, wait_time_sec: Math.max(0, waited)});
-        state.points = Math.max(0, state.points - 1); // 포기 페널티
-        feedbackFace('gaveup');
-        setTimeout(nextTrial, 500);
-      };
+        function startTimer() {
+            timeLeft = 30;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // 시간 초과시 자동으로 결과 화면으로
+                    setTimeout(() => {
+                        showScreen('result');
+                    }, 1000);
+                }
+            }, 1000);
+        }
 
-      // 지금 전환
-      $('#switchBtn').onclick = ()=>{
-        if(!state.waiting) return;
-        clearInterval(state.timerId);
-        state.waiting = false;
-        const waited = state.D - state.timeLeft;
-        pushTrialLog({choice:0, gave_up:0, switched:1, wait_time_sec: Math.max(0, waited)});
-        state.points += PARAMS.nowBase; // 즉시 점수
-        feedbackFace('switch');
-        setTimeout(nextTrial, 500);
-      };
-    }
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = display;
+        }
 
-    function updateTimerDisplay(sec){
-      const mm = String(Math.floor(sec/60)).padStart(2,'0');
-      const ss = String(sec%60).padStart(2,'0');
-      $('#timer').textContent = `${mm}:${ss}`;
-    }
+        function makeChoice(type) {
+            clearInterval(timerInterval);
+            
+            const character = document.getElementById('character');
+            
+            if (type === 'immediate') {
+                character.innerHTML = '<span class="text-4xl">😊</span>';
+                character.className = character.className.replace('from-yellow-400 to-orange-500', 'from-red-400 to-pink-500');
+            } else {
+                character.innerHTML = '<span class="text-4xl">⭐</span>';
+                character.className = character.className.replace('from-yellow-400 to-orange-500', 'from-blue-400 to-purple-500');
+            }
+            
+            // 1.5초 후 결과 화면으로
+            setTimeout(() => {
+                showScreen('result');
+            }, 1500);
+        }
 
-    function feedbackFace(kind){
-      const span = $('#character span');
-      const emoji = {
-        'immediate':'😊','delayed-start':'🤔','delayed-success':'⭐','gaveup':'😮','switch':'🙂'
-      }[kind] || '🤔';
-      span.textContent = emoji;
-      if(kind==='delayed-success'){
-        const box = $('#character');
-        box.classList.remove('from-yellow-400','to-orange-500');
-        box.classList.add('from-blue-400','to-purple-500');
-      }else if(kind==='immediate'){
-        const box = $('#character');
-        box.classList.remove('from-yellow-400','to-orange-500');
-        box.classList.add('from-red-400','to-pink-500');
-      }
-    }
-
-    // ===== 로그 & 결과 =====
-    function pushTrialLog(extra){
-      const rec = {
-        type: 'TRIAL',
-        pid: state.pid,
-        session: state.session,
-        trial: state.trial,
-        R: state.R,
-        D_sec: state.D,
-        ts: new Date().toISOString(),
-        ...extra
-      };
-      state.logs.push(rec);
-      localStorage.setItem('eft_logs', JSON.stringify(state.logs));
-    }
-
-    function renderResults(){
-      const sLogs = state.logs.filter(r=>r.type==='TRIAL' && r.session===state.session);
-      const total = sLogs.length || 1;
-      const delayed = sLogs.filter(r=>r.choice===1).length;
-      const immediate = total - delayed;
-
-      const delayedPct = Math.round((delayed/total)*100);
-      const immediatePct = 100 - delayedPct;
-
-      // 텍스트
-      $('#delayedPctText').textContent = `지연 선택 ${delayedPct}%`;
-      $('#immediatePctText').textContent = `즉시 선택 ${immediatePct}%`;
-
-      // 도넛(정확한 호 길이)
-      const r = 80, C = 2*Math.PI*r; // ≈ 502.65
-      // 파랑(지연)
-      $('#arcDelayed').setAttribute('stroke-dasharray', `${(C*delayedPct/100).toFixed(2)} ${C.toFixed(2)}`);
-      $('#arcDelayed').setAttribute('stroke-dashoffset', `${(C*0.0).toFixed(2)}`);
-      // 빨강(즉시) — 지연 아크 뒤에 이어 그림
-      const delayedLen = C*delayedPct/100;
-      $('#arcImmediate').setAttribute('stroke-dasharray', `${(C*immediatePct/100).toFixed(2)} ${C.toFixed(2)}`);
-      $('#arcImmediate').setAttribute('stroke-dashoffset', `${(-delayedLen).toFixed(2)}`);
-
-      // 요약 게이지/문구
-      $('#summaryCount').textContent = `+${delayed}`;
-      $('#growthBar').style.width = Math.min(100, delayedPct) + '%';
-      $('#summaryText').textContent = delayedPct >= 50
-        ? `지연 선택이 즉시 선택보다 많았습니다. 꾸준히 유지해 보세요.`
-        : `지연 선택 비율을 조금 더 올려 봅시다. 내일은 ${Math.min(100, delayedPct+10)}%를 목표로!`;
-    }
-
-    function endSession(){
-      showScreen('dashboard');
-    }
-
-    function newSession(){
-      // 세션 증가 및 초기화
-      state.session += 1;
-      state.trial = 0;
-      state.points = 0;
-      state.sessionId = Date.now();
-      showScreen('prompt');
-    }
-
-    // ===== 이벤트 바인딩 =====
-    document.getElementById('startBtn').onclick = () => showScreen('dashboard');
-    document.getElementById('toPromptBtn').onclick = () => showScreen('prompt');
-    document.getElementById('toGameBtn').onclick = saveEFTAndGo;
-
-    document.getElementById('immediateBtn').onclick = () => makeChoice('immediate');
-    document.getElementById('delayedBtn').onclick  = () => makeChoice('delayed');
-
-    document.getElementById('endSessionBtn').onclick = endSession;
-    document.getElementById('newSessionBtn').onclick = newSession;
-
-    // 초기 진입
-    showScreen('onboarding');
-  </script>
-</body>
+        // 초기 화면 설정
+        showScreen('onboarding');
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9881438cd2b55141',t:'MTc1OTM3NzMyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
